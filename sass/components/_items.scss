@@ -1,0 +1,28 @@
+/* Items */
+
+.items {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+
+  & li {
+    display: flex;
+    justify-content: space-between;
+    width: 45%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin: 0 5px 20px;
+    font-weight: 700;
+
+    @media (max-width: 500px) {
+      width: 100%;
+    }
+  }
+}
+
+// @media (max-width: 500px) {
+//   .items li {
+//     width: 100%;
+//   }
+// }

@@ -1,0 +1,11 @@
+header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
+
+  & h1 {
+    font-weight: 300;
+    margin-left: 10px;
+  }
+}
