@@ -4,8 +4,9 @@ Traversy Media _Modern JavaScript From The Beginning 2.0_ [Section 8 Project](ht
 
 ## For Local Development
 
+0. Install [nodejs](https://nodejs.org/)
 1. Open _terminal_
 2. In terminal, `cd ....` to _root directory_
-3. Run `npm run dev`
+3. Run `npm run dev`, (run `npm install` if this message is shown: _'vite' is not recognized as an internal or external command..._)
 4. Type `o` and press _Enter_ for opening the website in your default browser
 5. Type `q` and press _Enter_ when done
