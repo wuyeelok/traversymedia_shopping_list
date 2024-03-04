@@ -6,14 +6,14 @@ const clearBtn = document.getElementById("clear");
 const itemFilter = document.getElementById("filter");
 
 function filterItems(e) {
-  const filterTxt = itemFilter.value.toLowerCase();
-
+  const text = e.target.value.toLowerCase();
   const items = itemList.querySelectorAll("li");
-  for (let i of items) {
-    if (i.innerText.toLowerCase().includes(filterTxt)) {
-      i.style.display = "flex";
+
+  for (const item of items) {
+    if (item.innerText.toLowerCase().includes(text)) {
+      item.style.display = "flex";
     } else {
-      i.style.display = "none";
+      item.style.display = "none";
     }
   }
 }
