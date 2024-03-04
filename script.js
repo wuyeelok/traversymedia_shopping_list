@@ -3,17 +3,38 @@ const itemForm = document.getElementById("item-form");
 const itemInput = document.getElementById("item-input");
 const itemList = document.getElementById("item-list");
 const clearBtn = document.getElementById("clear");
+const itemFilter = document.getElementById("filter");
+
+function checkUI() {
+  const items = itemList.querySelectorAll("li");
+
+  if (items.length === 0) {
+    clearBtn.classList.add("hide");
+    itemFilter.classList.add("hide");
+  } else {
+    clearBtn.classList.remove("hide");
+    itemFilter.classList.remove("hide");
+  }
+}
 
 function removeItem(e) {
   if (e.target.parentElement.classList.contains("remove-item")) {
-    e.target.parentElement.parentElement.remove();
+    if (confirm("Are you sure?")) {
+      e.target.parentElement.parentElement.remove();
+
+      checkUI();
+    }
   }
 }
 
 function clearItems(e) {
-  // itemList.innerHTML = "";
-  while (itemList.firstElementChild) {
-    itemList.removeChild(itemList.firstElementChild);
+  if (confirm("Are you sure?")) {
+    // itemList.innerHTML = "";
+    while (itemList.firstElementChild) {
+      itemList.removeChild(itemList.firstElementChild);
+    }
+
+    checkUI();
   }
 }
 
@@ -55,7 +76,10 @@ function addItem(e) {
   );
   li.appendChild(button);
 
+  // Addd li to DOM
   itemList.appendChild(li);
+
+  checkUI();
 
   itemInput.value = "";
 }
@@ -64,3 +88,5 @@ function addItem(e) {
 itemForm.addEventListener("submit", addItem);
 itemList.addEventListener("click", removeItem); // addEventListener will also apply to child element
 clearBtn.addEventListener("click", clearItems);
+
+checkUI();
