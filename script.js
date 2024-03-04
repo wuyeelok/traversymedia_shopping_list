@@ -5,7 +5,31 @@ const itemList = document.getElementById("item-list");
 const clearBtn = document.getElementById("clear");
 const itemFilter = document.getElementById("filter");
 
+function filterItems(e) {
+  const filterTxt = itemFilter.value.toLowerCase();
+
+  const items = itemList.querySelectorAll("li");
+  for (let i of items) {
+    if (i.innerText.toLowerCase().includes(filterTxt)) {
+      i.style.display = "flex";
+    } else {
+      i.style.display = "none";
+    }
+  }
+}
+
+function resetFilterItems() {
+  const items = itemList.querySelectorAll("li");
+  for (let i of items) {
+    i.style.display = "flex";
+  }
+
+  itemFilter.value = "";
+}
+
 function checkUI() {
+  resetFilterItems();
+
   const items = itemList.querySelectorAll("li");
 
   if (items.length === 0) {
@@ -88,5 +112,6 @@ function addItem(e) {
 itemForm.addEventListener("submit", addItem);
 itemList.addEventListener("click", removeItem); // addEventListener will also apply to child element
 clearBtn.addEventListener("click", clearItems);
+itemFilter.addEventListener("input", filterItems);
 
 checkUI();
