@@ -37,6 +37,8 @@ function resetFilterItems() {
 }
 
 function checkUI() {
+  itemInput.value = "";
+
   resetFilterItems();
 
   const items = itemList.querySelectorAll("li");
@@ -48,6 +50,11 @@ function checkUI() {
     clearBtn.classList.remove("hide");
     itemFilter.classList.remove("hide");
   }
+
+  formBtn.innerHTML = `<i class="fa-solid fa-plus"></i> Add Item`;
+  formBtn.style.backgroundColor = "#333";
+
+  isEditMode = false;
 }
 
 function onClickItem(e) {
@@ -143,11 +150,23 @@ function onAddItemSubmit(e) {
     return;
   }
 
-  // Create item DOM element
-  addItemToDOM(newItem);
+  // Check for edit mode
+  if (isEditMode) {
+    const itemToEdit = itemList.querySelector(".edit-mode");
+    const itemToEditTxt = itemToEdit.innerText;
 
-  // Add item to local storage
-  addItemToStorage(newItem);
+    updateItemInDOM(newItem, itemToEdit);
+    updateItemInStorage(newItem, itemToEditTxt);
+
+    itemToEdit.classList.remove("edit-mode");
+    isEditMode = false;
+  } else {
+    // Create item DOM element
+    addItemToDOM(newItem);
+
+    // Add item to local storage
+    addItemToStorage(newItem);
+  }
 
   checkUI();
 
@@ -188,6 +207,26 @@ function getItemsForStorage() {
   }
 
   return itemsFromStorage;
+}
+
+function updateItemInDOM(newItemTxt, targetItemEle) {
+  targetItemEle.innerText = newItemTxt;
+
+  const button = createButtonWithIcon(
+    "remove-item btn-link text-red",
+    "fa-solid fa-xmark"
+  );
+  targetItemEle.appendChild(button);
+}
+
+function updateItemInStorage(newItem, oldItem) {
+  const itemsFromStorage = getItemsForStorage();
+
+  const index = itemsFromStorage.indexOf(oldItem);
+  itemsFromStorage[index] = newItem;
+
+  // Convert to JSON string and set to local storage
+  localStorage.setItem("items", JSON.stringify(itemsFromStorage));
 }
 
 // Initialze app
