@@ -4,6 +4,8 @@ const itemInput = document.getElementById("item-input");
 const itemList = document.getElementById("item-list");
 const clearBtn = document.getElementById("clear");
 const itemFilter = document.getElementById("filter");
+const addItemBtn = document.getElementById("addItemBtn");
+const editItemBtn = document.getElementById("editItemBtn");
 
 function displayItems() {
   const itemsFromStorage = getItemsForStorage();
@@ -51,7 +53,29 @@ function checkUI() {
 function onClickItem(e) {
   if (e.target.parentElement.classList.contains("remove-item")) {
     removeItem(e.target.parentElement.parentElement);
+  } else if (e.target.tagName === "LI") {
+    const text = e.target.innerText;
+    itemInput.value = text;
+
+    // Enable to edit mode
+    enableEditState(text);
   }
+}
+
+function enableEditState(oldItem) {
+  localStorage.setItem("app-state", "edit");
+  localStorage.setItem("edit-item", oldItem);
+
+  addItemBtn.classList.add("hide");
+  editItemBtn.classList.remove("hide");
+}
+
+function resetEditState() {
+  localStorage.setItem("app-state", "create");
+  localStorage.removeItem("edit-item");
+
+  addItemBtn.classList.remove("hide");
+  editItemBtn.classList.add("hide");
 }
 
 function removeItem(item) {
@@ -116,6 +140,22 @@ function createButtonWithIcon(buttonClasses, iconClasses) {
   return button;
 }
 
+function updateItemToDOM(newItem, oldItem) {
+  const items = itemList.querySelectorAll("li");
+
+  for (let i = 0; i < items.length; i++) {
+    if (oldItem === items[i].innerText) {
+      const button = createButtonWithIcon(
+        "remove-item btn-link text-red",
+        "fa-solid fa-xmark"
+      );
+      items[i].innerText = newItem;
+      items[i].appendChild(button);
+      break;
+    }
+  }
+}
+
 function onAddItemSubmit(e) {
   e.preventDefault();
   const newItem = itemInput.value.trim();
@@ -125,11 +165,24 @@ function onAddItemSubmit(e) {
     return;
   }
 
-  // Create item DOM element
-  addItemToDOM(newItem);
+  if (localStorage.getItem("app-state") === "edit") {
+    const oldItem = localStorage.getItem("edit-item");
 
-  // Add item to local storage
-  addItemToStorage(newItem);
+    // update item DOM element
+    updateItemToDOM(newItem, oldItem);
+
+    // update item in Storage
+    updateItemToStorage(newItem, oldItem);
+
+    // reset state
+    resetEditState();
+  } else {
+    // Create item DOM element
+    addItemToDOM(newItem);
+
+    // Add item to local storage
+    addItemToStorage(newItem);
+  }
 
   checkUI();
 
@@ -160,6 +213,16 @@ function addItemToStorage(item) {
   localStorage.setItem("items", JSON.stringify(itemsFromStorage));
 }
 
+function updateItemToStorage(newItem, oldItem) {
+  const itemsFromStorage = getItemsForStorage();
+
+  const index = itemsFromStorage.indexOf(oldItem);
+  itemsFromStorage[index] = newItem;
+
+  // Convert to JSON string and set to local storage
+  localStorage.setItem("items", JSON.stringify(itemsFromStorage));
+}
+
 function getItemsForStorage() {
   let itemsFromStorage;
 
@@ -180,6 +243,8 @@ function init() {
   clearBtn.addEventListener("click", clearItems);
   itemFilter.addEventListener("input", filterItems);
   document.addEventListener("DOMContentLoaded", displayItems);
+
+  resetEditState();
 
   checkUI();
 }
