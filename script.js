@@ -36,6 +36,11 @@ function resetFilterItems() {
   itemFilter.value = "";
 }
 
+function isItemExistInStorage(item) {
+  const itemsFromStorage = getItemsForStorage().map((i) => i.toLowerCase());
+  return itemsFromStorage.includes(item.toLowerCase());
+}
+
 function checkUI() {
   itemInput.value = "";
 
@@ -160,6 +165,9 @@ function onAddItemSubmit(e) {
 
     itemToEdit.classList.remove("edit-mode");
     isEditMode = false;
+  } else if (isItemExistInStorage(newItem)) {
+    alert("Item already exists");
+    return;
   } else {
     // Create item DOM element
     addItemToDOM(newItem);
