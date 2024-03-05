@@ -65,6 +65,11 @@ function onClickItem(e) {
   }
 }
 
+function checkIfItemExists(item) {
+  const itemsFromStorage = getItemsForStorage().map((i) => i.toLowerCase());
+  return itemsFromStorage.includes(item.toLowerCase());
+}
+
 function setItemToEdit(item) {
   isEditMode = true;
 
@@ -160,6 +165,9 @@ function onAddItemSubmit(e) {
 
     itemToEdit.classList.remove("edit-mode");
     isEditMode = false;
+  } else if (checkIfItemExists(newItem)) {
+    alert("That item already exists!");
+    return;
   } else {
     // Create item DOM element
     addItemToDOM(newItem);
