@@ -5,6 +5,13 @@ const itemList = document.getElementById("item-list");
 const clearBtn = document.getElementById("clear");
 const itemFilter = document.getElementById("filter");
 
+function displayItems() {
+  const itemsFromStorage = getItemsForStorage();
+  itemsFromStorage.forEach((item) => addItemToDOM(item));
+
+  checkUI();
+}
+
 function filterItems(e) {
   const text = e.target.value.toLowerCase();
   const items = itemList.querySelectorAll("li");
@@ -117,6 +124,15 @@ function addItemToDOM(item) {
 }
 
 function addItemToStorage(item) {
+  const itemsFromStorage = getItemsForStorage();
+
+  itemsFromStorage.push(item);
+
+  // Convert to JSON string and set to local storage
+  localStorage.setItem("items", JSON.stringify(itemsFromStorage));
+}
+
+function getItemsForStorage() {
   let itemsFromStorage;
 
   if (localStorage.getItem("items") === null) {
@@ -125,16 +141,19 @@ function addItemToStorage(item) {
     itemsFromStorage = JSON.parse(localStorage.getItem("items"));
   }
 
-  itemsFromStorage.push(item);
-
-  // Convert to JSON string and set to local storage
-  localStorage.setItem("items", JSON.stringify(itemsFromStorage));
+  return itemsFromStorage;
 }
 
-// Event Listeners
-itemForm.addEventListener("submit", onAddItemSubmit);
-itemList.addEventListener("click", removeItem); // addEventListener will also apply to child element
-clearBtn.addEventListener("click", clearItems);
-itemFilter.addEventListener("input", filterItems);
+// Initialze app
+function init() {
+  // Event Listeners
+  itemForm.addEventListener("submit", onAddItemSubmit);
+  itemList.addEventListener("click", removeItem); // addEventListener will also apply to child element
+  clearBtn.addEventListener("click", clearItems);
+  itemFilter.addEventListener("input", filterItems);
+  document.addEventListener("DOMContentLoaded", displayItems);
 
-checkUI();
+  checkUI();
+}
+
+init();
