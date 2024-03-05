@@ -100,7 +100,7 @@ function addItem(e) {
   );
   li.appendChild(button);
 
-  // Addd li to DOM
+  // Add li to DOM
   itemList.appendChild(li);
 
   checkUI();
