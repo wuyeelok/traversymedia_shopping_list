@@ -5,6 +5,31 @@ const itemList = document.getElementById("item-list");
 const clearBtn = document.getElementById("clear");
 const itemFilter = document.getElementById("filter");
 
+const localStorageShopListItemKeyPrefix = "shopping_list_item_";
+
+function getShopList(localStorageKeyPrefix) {
+  const items = [];
+
+  let i = 0;
+  while (localStorage.getItem(`${localStorageKeyPrefix}${i}`)) {
+    const item = localStorage.getItem(`${localStorageKeyPrefix}${i}`);
+
+    items.push(item);
+
+    i++;
+  }
+
+  return items;
+}
+
+function saveShopList(localStorageKeyPrefix, items) {
+  localStorage.clear();
+
+  for (let i = 0; i < items.length; i++) {
+    localStorage.setItem(`${localStorageKeyPrefix}${i}`, items[i]);
+  }
+}
+
 function filterItems(e) {
   const text = e.target.value.toLowerCase();
   const items = itemList.querySelectorAll("li");
@@ -47,6 +72,14 @@ function removeItem(e) {
       e.target.parentElement.parentElement.remove();
 
       checkUI();
+
+      const items = [];
+      const itemLis = itemList.querySelectorAll("li");
+      for (const itemLi of itemLis) {
+        const item = itemLi.innerText;
+        items.push(item);
+      }
+      saveShopList(localStorageShopListItemKeyPrefix, items);
     }
   }
 }
@@ -58,6 +91,7 @@ function clearItems(e) {
       itemList.removeChild(itemList.firstElementChild);
     }
 
+    saveShopList(localStorageShopListItemKeyPrefix, []);
     checkUI();
   }
 }
@@ -100,12 +134,40 @@ function addItem(e) {
   );
   li.appendChild(button);
 
-  // Addd li to DOM
+  // Add li to DOM
   itemList.appendChild(li);
+
+  // Add item to storage
+  const items = getShopList(localStorageShopListItemKeyPrefix);
+  items.push(newItem);
+  saveShopList(localStorageShopListItemKeyPrefix, items);
 
   checkUI();
 
   itemInput.value = "";
+}
+
+function renderShopList(localStorageKeyPrefix) {
+  while (itemList.firstElementChild) {
+    itemList.removeChild(itemList.firstElementChild);
+  }
+
+  const items = getShopList(localStorageKeyPrefix);
+
+  for (const item of items) {
+    // Create list item
+    const li = document.createElement("li");
+    li.appendChild(document.createTextNode(item));
+
+    const button = createButtonWithIcon(
+      "remove-item btn-link text-red",
+      "fa-solid fa-xmark"
+    );
+    li.appendChild(button);
+
+    // Add li to DOM
+    itemList.appendChild(li);
+  }
 }
 
 // Event Listeners
@@ -114,4 +176,5 @@ itemList.addEventListener("click", removeItem); // addEventListener will also ap
 clearBtn.addEventListener("click", clearItems);
 itemFilter.addEventListener("input", filterItems);
 
+renderShopList(localStorageShopListItemKeyPrefix);
 checkUI();
